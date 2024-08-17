@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Order History</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Dish Name</th>
+            <th>Quantity</th>
+            <th>Order Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.dish_name }}</td>
+            <td>{{ order.quantity }}</td>
+            <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ order.status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

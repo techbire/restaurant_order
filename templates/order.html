@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Place Your Order</h2>
+<form method="POST">
+    <label for="customer_name">Your Name:</label>
+    <input type="text" id="customer_name" name="customer_name" required>
+    
+    <label for="dish_name">Dish Name:</label>
+    <select id="dish_name" name="dish_name" required>
+        {% for item in menu_items %}
+            <option value="{{ item.name }}">{{ item.name }} - ${{ "%.2f"|format(item.price) }}</option>
+        {% endfor %}
+    </select>
+    
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" required>
+    
+    <label for="special_instructions">Special Instructions:</label>
+    <textarea id="special_instructions" name="special_instructions"></textarea>
+    
+    <button type="submit">Place Order</button>
+</form>
+{% endblock %}

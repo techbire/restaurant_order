@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Complete Your Payment</h2>
+<p>Order details:</p>
+<ul>
+    <li>Dish: {{ order.dish_name }}</li>
+    <li>Quantity: {{ order.quantity }}</li>
+    <li>Total Amount: ${{ "%.2f"|format(total_amount) }}</li>
+</ul>
+
+<form id="payment-form">
+    <div id="payment-element">
+        <!-- Stripe.js will insert the payment element here -->
+    </div>
+    <button id="submit">Pay Now</button>
+    <div id="error-message"></div>
+</form>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('pk_test_51PnKT6CKXV5E9SzXALmLz2bvrJO3o8v7X9s7Ebo8sQulOJ1k4JJOS4yodx3H7ZNzsDMFaJKVviCFj6e8Z41bUI0G002st4vkaZ');
+    const elements = stripe.elements();
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const {error} = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: "{{ url_for('payment_success', order_id=order.id, _external=True) }}",
+            },
+        });
+
+        if (error) {
+            const messageContainer = document.querySelector('#error-message');
+            messageContainer.textContent = error.message;
+        }
+    });
+</script>
+{% endblock %}

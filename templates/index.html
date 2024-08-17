@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Welcome to our Restaurant Order System</h2>
+<p>Check out our menu and place an order!</p>
+
+<h3>Featured Menu Items</h3>
+<div class="menu-items">
+    {% for item in menu_items[:3] %}
+        <div class="menu-item">
+            <h4>{{ item.name }}</h4>
+            <p>{{ item.description }}</p>
+            <p>Price: ${{ "%.2f"|format(item.price) }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
