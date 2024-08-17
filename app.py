@@ -1,6 +1,7 @@
 import os
 import stripe
 import logging
+logging.basicConfig(level=logging.DEBUG)
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -12,7 +13,7 @@ from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///restaurant.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///tmp/restaurant.db')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key_here')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -55,8 +56,16 @@ class MenuItem(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/')  
-# menu bhi ho skta hai
+@app.route('/')
+def index():
+    try:
+        menu_items = MenuItem.query.all()
+        app.logger.info(f"Retrieved {len(menu_items)} menu items")
+        return render_template('index.html', menu_items=menu_items)
+    except Exception as e:
+        app.logger.error(f"Error in index route: {str(e)}")
+        return "An error occurred", 500
+    
 @cache.cached(timeout=60)
 def index():
     menu_items = MenuItem.query.all()
@@ -255,6 +264,15 @@ def add_sample_menu_items():
     
     db.session.commit()
 
+def init_db():
+    with app.app_context():
+        db.create_all()
+        add_sample_menu_items()
+
+if __name__ == '__main__':
+    init_db()
+    app.run()
+
 if __name__ == '__main__':
     if not os.path.exists('logs'):
         os.mkdir('logs')
@@ -275,3 +293,9 @@ else:
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    app.logger.error(f"500 error: {str(error)}")
+    return "500 Internal Server Error", 500
