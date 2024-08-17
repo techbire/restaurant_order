@@ -160,7 +160,7 @@ def order():
                 metadata={'order_id': new_order.id}
             )
             
-            return render_template('payment.html', client_secret=intent.client_secret, order=new_order, total_amount=total_amount)
+            return render_template('payment.html', client_secret=intent.client_secret)
         except stripe.error.StripeError as e:
             app.logger.error(f'Stripe error: {str(e)}')
             flash('An error occurred while processing your payment. Please try again.')

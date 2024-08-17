@@ -13,7 +13,7 @@
     <div id="payment-element">
         <!-- Stripe.js will insert the payment element here -->
     </div>
-    <button id="submit">Pay Now</button>
+    <button id="submit">Pay now</button>
     <div id="error-message"></div>
 </form>
 
@@ -31,7 +31,7 @@
         const {error} = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: "{{ url_for('payment_success', order_id=order.id, _external=True) }}",
+                return_url: "{{ url_for('payment_success', _external=True) }}",
             },
         });
 
