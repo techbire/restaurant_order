@@ -38,7 +38,7 @@ This application allows restaurant customers to place orders online. It begins a
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/restaurant_order.git
+   git clone https://github.com/techbire/restaurant_order.git
    cd restaurant_order
    ```
 
